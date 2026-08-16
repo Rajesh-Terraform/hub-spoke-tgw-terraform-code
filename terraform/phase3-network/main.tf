@@ -1,5 +1,10 @@
 # ============================================================
-# 1. CREATE TGW + RAM SHARE
+# PHASE 3 - TRANSIT GATEWAY + RAM + ATTACHMENTS
+# ============================================================
+
+
+# ============================================================
+# 1. TRANSIT GATEWAY MODULE
 # ============================================================
 
 module "transit_gateway" {
@@ -14,8 +19,8 @@ module "transit_gateway" {
 
 
 # ============================================================
-# 2. FIND EXISTING HUB VPC
-# Account: 647132523867
+# 2. FIND HUB VPC
+# HUB ACCOUNT: 647132523867
 # ============================================================
 
 data "aws_vpc" "hub" {
@@ -29,7 +34,7 @@ data "aws_vpc" "hub" {
 
 
 # ============================================================
-# 3. FIND EXISTING HUB PRIVATE SUBNETS
+# 3. FIND HUB PRIVATE SUBNETS
 # ============================================================
 
 data "aws_subnets" "hub_private" {
@@ -48,8 +53,8 @@ data "aws_subnets" "hub_private" {
 
 
 # ============================================================
-# 4. FIND EXISTING SPOKE VPC
-# Account: 434097521299
+# 4. FIND SPOKE VPC
+# SPOKE ACCOUNT: 434097521299
 # ============================================================
 
 data "aws_vpc" "spoke" {
@@ -63,7 +68,7 @@ data "aws_vpc" "spoke" {
 
 
 # ============================================================
-# 5. FIND EXISTING SPOKE PRIVATE SUBNETS
+# 5. FIND SPOKE PRIVATE SUBNETS
 # ============================================================
 
 data "aws_subnets" "spoke_private" {
@@ -158,7 +163,7 @@ resource "aws_ec2_transit_gateway_route_table_association" "spoke" {
 
 
 # ============================================================
-# 10. TGW HUB -> SPOKE
+# 10. HUB TGW -> SPOKE NETWORK
 # ============================================================
 
 resource "aws_ec2_transit_gateway_route" "hub_to_spoke" {
@@ -173,7 +178,7 @@ resource "aws_ec2_transit_gateway_route" "hub_to_spoke" {
 
 
 # ============================================================
-# 11. TGW SPOKE -> HUB
+# 11. SPOKE TGW -> HUB NETWORK
 # ============================================================
 
 resource "aws_ec2_transit_gateway_route" "spoke_to_hub" {
