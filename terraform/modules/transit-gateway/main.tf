@@ -48,3 +48,11 @@ resource "aws_ram_principal_association" "spoke" {
   resource_share_arn = aws_ram_resource_share.tgw.arn
   principal          = var.spoke_account_id
 }
+
+module "transit_gateway" {
+  source = "./modules/transit-gateway"
+
+  name              = var.tgw_name
+  amazon_side_asn   = var.amazon_side_asn
+  spoke_account_id  = var.spoke_account_id
+}
