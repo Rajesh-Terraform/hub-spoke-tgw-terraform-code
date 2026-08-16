@@ -1,0 +1,156 @@
+name: Terraform Hub Spoke
+
+on:
+  push:
+    branches:
+      - main
+
+  
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-south-1
+  TF_VERSION: 1.9.8
+
+jobs:
+
+  # ==========================================
+  # PHASE 1 - HUB VPC
+  # ==========================================
+
+  phase1-hub-vpc:
+    name: Phase 1 - Hub VPC
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: terraform/hub/phase1-hubvpc
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::647132523867:role/github-actions-terraform-role-v1
+          aws-region: ap-south-1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format
+        run: terraform 
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve
+
+
+  # ==========================================
+  # PHASE 2 - SPOKE VPC
+  # ==========================================
+
+  phase2-spoke-vpc:
+    name: Phase 2 - Spoke VPC
+    runs-on: ubuntu-latest
+
+    needs:
+      - phase1-hub-vpc
+
+    defaults:
+      run:
+        working-directory: terraform/spoke/phase2-spokevpc
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::434097521299:role/testingdummy
+          aws-region: ap-south-1
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format
+        run: terraform fmt
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve
+
+
+  # ==========================================
+  # PHASE 3 - TGW NETWORK
+  # ==========================================
+
+  phase3-network:
+    name: Phase 3 - TGW Network
+    runs-on: ubuntu-latest
+
+    needs:
+      - phase2-spoke-vpc
+
+    defaults:
+      run:
+        working-directory: terraform/phase3-network
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::647132523867:role/github-actions-terraform-role-v1
+          aws-region: ap-south-1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format
+        run: terraform fmt
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve
