@@ -48,13 +48,6 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Show Terraform files
-        run: |
-         pwd
-         ls -la
-         echo "----- main.tf -----"
-         cat main.tf
-
       - name: Terraform Validate
         run: terraform validate
 
