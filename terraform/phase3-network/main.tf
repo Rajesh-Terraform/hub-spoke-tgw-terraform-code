@@ -13,9 +13,9 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# --------------------------------------------------
-# Find existing Hub VPC
-# --------------------------------------------------
+# =========================================================
+# FIND EXISTING HUB VPC
+# =========================================================
 
 data "aws_vpc" "hub" {
   filter {
@@ -24,9 +24,9 @@ data "aws_vpc" "hub" {
   }
 }
 
-# --------------------------------------------------
-# Find existing Hub private subnets
-# --------------------------------------------------
+# =========================================================
+# FIND EXISTING HUB PRIVATE SUBNETS
+# =========================================================
 
 data "aws_subnets" "hub_private" {
   filter {
@@ -40,9 +40,9 @@ data "aws_subnets" "hub_private" {
   }
 }
 
-# --------------------------------------------------
-# Transit Gateway
-# --------------------------------------------------
+# =========================================================
+# CREATE TRANSIT GATEWAY
+# =========================================================
 
 resource "aws_ec2_transit_gateway" "main" {
   description = "Hub-Spoke Transit Gateway"
@@ -52,11 +52,12 @@ resource "aws_ec2_transit_gateway" "main" {
   }
 }
 
-# --------------------------------------------------
-# Hub VPC -> Transit Gateway attachment
-# --------------------------------------------------
+# =========================================================
+# ATTACH HUB VPC TO TRANSIT GATEWAY
+# =========================================================
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "hub" {
+
   transit_gateway_id = aws_ec2_transit_gateway.main.id
 
   vpc_id = data.aws_vpc.hub.id
