@@ -1,6 +1,4 @@
-data "aws_vpc" "hub" {
-  id = var.hub_vpc_id
-}
+
 
 data "aws_subnets" "hub_private" {
   filter {
