@@ -29,7 +29,6 @@ resource "aws_ec2_transit_gateway_route_table" "spoke" {
   }
 }
 
-# AWS RAM SHARE
 resource "aws_ram_resource_share" "tgw" {
   name = "${var.name}-share"
 
@@ -40,13 +39,11 @@ resource "aws_ram_resource_share" "tgw" {
   }
 }
 
-# SHARE TGW THROUGH RAM
 resource "aws_ram_resource_association" "tgw" {
   resource_share_arn = aws_ram_resource_share.tgw.arn
   resource_arn       = aws_ec2_transit_gateway.this.arn
 }
 
-# SHARE WITH SPOKE ACCOUNT
 resource "aws_ram_principal_association" "spoke" {
   resource_share_arn = aws_ram_resource_share.tgw.arn
   principal          = var.spoke_account_id

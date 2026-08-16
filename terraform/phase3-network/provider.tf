@@ -10,13 +10,11 @@ terraform {
 }
 
 # HUB ACCOUNT
-# 647132523867
 provider "aws" {
   region = "ap-south-1"
 }
 
 # SPOKE ACCOUNT
-# 434097521299
 provider "aws" {
   alias  = "spoke"
   region = "ap-south-1"

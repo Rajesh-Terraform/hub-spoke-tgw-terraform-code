@@ -12,4 +12,4 @@ output "spoke_route_table_id" {
 
 output "ram_share_arn" {
   value = aws_ram_resource_share.tgw.arn
-} 
+}
