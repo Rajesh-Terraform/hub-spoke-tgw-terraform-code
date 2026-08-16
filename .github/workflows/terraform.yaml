@@ -26,7 +26,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: terraform/hub/phase1-hubvpc
+        working-directory: terraform
 
     steps:
 
