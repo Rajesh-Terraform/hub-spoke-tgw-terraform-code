@@ -26,9 +26,10 @@ jobs:
 
     defaults:
       run:
-        working-directory: terraform
+        working-directory: terraform/hub/phase2-hubvpc
 
     steps:
+    
 
       - name: Checkout
         uses: actions/checkout@v4
