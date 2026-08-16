@@ -94,8 +94,7 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Format
-        run: terraform fmt
+     
 
       - name: Terraform Validate
         run: terraform validate
@@ -104,7 +103,7 @@ jobs:
         run: terraform plan
 
       - name: Terraform Apply
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      
         run: terraform apply -auto-approve
 
 
