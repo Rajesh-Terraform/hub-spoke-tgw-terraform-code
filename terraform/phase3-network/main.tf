@@ -1,62 +1,5 @@
-module "transit_gateway" {
-  source = "../modules/transit-gateway"
-
-  name = "hub-spoke-tgw"
-
-  amazon_side_asn = 64512
-
-  spoke_account_id = "434097521299"
-}
-
-
-data "aws_vpc" "hub" {
-  provider = aws
-
-  filter {
-    name   = "tag:Name"
-    values = ["hub-vpc"]
-  }
-}
-
-data "aws_vpc" "spoke" {
-  provider = aws.spoke
-
-  filter {
-    name   = "tag:Name"
-    values = ["spoke-vpc"]
-  }
-}  
-
-
-data "aws_subnets" "spoke_private" {
-  provider = aws.spoke
-
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.spoke.id]
-  }
-
-  filter {
-    name   = "tag:Tier"
-    values = ["private"]
-  }
-}
-
-
-module "transit_gateway" {
-  source = "../modules/transit-gateway"
-
-  name = "hub-spoke-tgw"
-
-  amazon_side_asn = 64512
-
-  spoke_account_id = "434097521299"
-}
-
-
-
 # ============================================================
-# TRANSIT GATEWAY MODULE
+# 1. CREATE TGW + RAM SHARE
 # ============================================================
 
 module "transit_gateway" {
@@ -71,7 +14,8 @@ module "transit_gateway" {
 
 
 # ============================================================
-# FIND HUB VPC
+# 2. FIND EXISTING HUB VPC
+# Account: 647132523867
 # ============================================================
 
 data "aws_vpc" "hub" {
@@ -85,7 +29,7 @@ data "aws_vpc" "hub" {
 
 
 # ============================================================
-# FIND HUB PRIVATE SUBNETS
+# 3. FIND EXISTING HUB PRIVATE SUBNETS
 # ============================================================
 
 data "aws_subnets" "hub_private" {
@@ -104,7 +48,8 @@ data "aws_subnets" "hub_private" {
 
 
 # ============================================================
-# FIND SPOKE VPC
+# 4. FIND EXISTING SPOKE VPC
+# Account: 434097521299
 # ============================================================
 
 data "aws_vpc" "spoke" {
@@ -118,7 +63,7 @@ data "aws_vpc" "spoke" {
 
 
 # ============================================================
-# FIND SPOKE PRIVATE SUBNETS
+# 5. FIND EXISTING SPOKE PRIVATE SUBNETS
 # ============================================================
 
 data "aws_subnets" "spoke_private" {
@@ -137,7 +82,7 @@ data "aws_subnets" "spoke_private" {
 
 
 # ============================================================
-# HUB TGW VPC ATTACHMENT
+# 6. HUB VPC -> TGW ATTACHMENT
 # ============================================================
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "hub" {
@@ -162,7 +107,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "hub" {
 
 
 # ============================================================
-# SPOKE TGW VPC ATTACHMENT
+# 7. SPOKE VPC -> TGW ATTACHMENT
 # ============================================================
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "spoke" {
@@ -186,8 +131,57 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "spoke" {
 }
 
 
+# ============================================================
+# 8. HUB ATTACHMENT -> HUB TGW ROUTE TABLE
+# ============================================================
+
+resource "aws_ec2_transit_gateway_route_table_association" "hub" {
+  transit_gateway_attachment_id =
+    aws_ec2_transit_gateway_vpc_attachment.hub.id
+
+  transit_gateway_route_table_id =
+    module.transit_gateway.hub_route_table_id
+}
+
 
 # ============================================================
-# HUB ATTACHMENT -> HUB TGW ROUTE TABLE
+# 9. SPOKE ATTACHMENT -> SPOKE TGW ROUTE TABLE
 # ============================================================
 
+resource "aws_ec2_transit_gateway_route_table_association" "spoke" {
+  transit_gateway_attachment_id =
+    aws_ec2_transit_gateway_vpc_attachment.spoke.id
+
+  transit_gateway_route_table_id =
+    module.transit_gateway.spoke_route_table_id
+}
+
+
+# ============================================================
+# 10. TGW HUB -> SPOKE
+# ============================================================
+
+resource "aws_ec2_transit_gateway_route" "hub_to_spoke" {
+  transit_gateway_route_table_id =
+    module.transit_gateway.hub_route_table_id
+
+  destination_cidr_block = "10.1.0.0/16"
+
+  transit_gateway_attachment_id =
+    aws_ec2_transit_gateway_vpc_attachment.spoke.id
+}
+
+
+# ============================================================
+# 11. TGW SPOKE -> HUB
+# ============================================================
+
+resource "aws_ec2_transit_gateway_route" "spoke_to_hub" {
+  transit_gateway_route_table_id =
+    module.transit_gateway.spoke_route_table_id
+
+  destination_cidr_block = "10.0.0.0/16"
+
+  transit_gateway_attachment_id =
+    aws_ec2_transit_gateway_vpc_attachment.hub.id
+}
