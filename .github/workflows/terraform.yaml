@@ -1,8 +1,6 @@
 name: Terraform
 
 on:
-
-
   push:
     branches:
       - main
@@ -19,6 +17,9 @@ env:
 
 jobs:
 
+  # ============================================================
+  # HUB
+  # ============================================================
   terraform-hub:
     name: Terraform Hub
     runs-on: ubuntu-latest
@@ -37,16 +38,19 @@ jobs:
           role-to-assume: arn:aws:iam::647132523867:role/github-actions-terraform-role-v1
           aws-region: ap-south-1
 
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.14.7
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -upgrade
 
-      - name: Terraform Format 
-        run: terraform fmt
+      - name: Terraform Format
+        run: terraform fmt -recursive
 
       - name: Terraform Validate
         run: terraform validate
@@ -58,6 +62,9 @@ jobs:
         run: terraform apply -auto-approve
 
 
+  # ============================================================
+  # SPOKE
+  # ============================================================
   terraform-spoke:
     name: Terraform Spoke
     needs: terraform-hub
@@ -76,18 +83,20 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::434097521299:role/testingdummy
           aws-region: ap-south-1
-          
-          
+
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.14.7
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -upgrade
 
-      - name: Terraform Format 
-        run: terraform fmt 
+      - name: Terraform Format
+        run: terraform fmt -recursive
 
       - name: Terraform Validate
         run: terraform validate
@@ -99,6 +108,9 @@ jobs:
         run: terraform apply -auto-approve
 
 
+  # ============================================================
+  # TGW
+  # ============================================================
   terraform-tgw:
     name: Terraform TGW
     needs:
@@ -106,6 +118,10 @@ jobs:
       - terraform-spoke
 
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
 
     defaults:
       run:
@@ -118,19 +134,22 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
         with:
-          role-to-assume:  arn:aws:iam::647132523867:role/github-actions-terraform-role-v1
+          role-to-assume: arn:aws:iam::647132523867:role/github-actions-terraform-role-v1
           aws-region: ap-south-1
+
+      - name: Verify AWS identity
+        run: aws sts get-caller-identity
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.14.7
 
-      - name: Terraform Init  -upgrade
-        run: terraform init
+      - name: Terraform Init
+        run: terraform init -upgrade
 
-      - name: Terraform Format  -recursive
-        run: terraform fmt 
+      - name: Terraform Format
+        run: terraform fmt -recursive
 
       - name: Terraform Validate
         run: terraform validate
@@ -139,4 +158,4 @@ jobs:
         run: terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve  
+        run: terraform apply -auto-approve
