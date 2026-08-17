@@ -8,7 +8,7 @@ data "terraform_remote_state" "hub" {
   }
 }
 
-data "terraform_remote_state" "spoke" {
+data "terraform_remote_state" "hub" {
   backend = "s3"
 
   config = {
