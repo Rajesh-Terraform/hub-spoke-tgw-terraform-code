@@ -30,7 +30,7 @@ provider "aws" {
   region = var.region
 
   assume_role {
-    role_arn = " arn:aws:iam::434097521299:role/testingdummy"
+    role_arn =  "arn:aws:iam::434097521299:role/testingdummy"
   }
 
   default_tags {
