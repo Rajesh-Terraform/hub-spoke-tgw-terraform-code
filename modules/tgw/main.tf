@@ -1,5 +1,3 @@
-
-
 data "aws_subnets" "hub_private" {
   filter {
     name   = "vpc-id"
@@ -12,23 +10,18 @@ data "aws_subnets" "hub_private" {
   }
 }
 
-module "transit_gateway" {
-  source = "./modules/transit-gateway"
-}
-
 resource "aws_ec2_transit_gateway_vpc_attachment" "hub" {
+  provider = aws.hub
+
   vpc_id = data.aws_vpc.hub.id
 
-   subnet_ids = [
+  subnet_ids = [
     data.aws_subnets.hub_private.ids[0],
     data.aws_subnets.hub_private.ids[1]
   ]
 
-  transit_gateway_id = module.transit_gateway.transit_gateway_id
+  transit_gateway_id = aws_ec2_transit_gateway.this.id
 }
-
-
-
 
 # =========================================================
 # TRANSIT GATEWAY
@@ -65,8 +58,6 @@ resource "aws_ram_resource_share" "tgw" {
 
   name = "${var.name}-share"
 
-  # This must be true if the accounts are not in
-  # the same AWS Organization.
   allow_external_principals = true
 
   tags = merge(
@@ -90,8 +81,4 @@ resource "aws_ram_principal_association" "spoke" {
   principal          = var.spoke_account_id
   resource_share_arn = aws_ram_resource_share.tgw.arn
 }
-
-# =========================================================
-# HUB TGW ATTACHMENT
-# =========================================================
 
