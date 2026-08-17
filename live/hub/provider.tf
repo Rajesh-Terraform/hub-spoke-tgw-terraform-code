@@ -21,3 +21,12 @@ provider "aws" {
     }
   }
 }
+
+provider "aws" {
+  region = var.region
+}
+
+provider "aws" {
+  alias  = "hub"
+  region = var.region
+}
