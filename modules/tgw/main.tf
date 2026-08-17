@@ -19,7 +19,7 @@ module "transit_gateway" {
 resource "aws_ec2_transit_gateway_vpc_attachment" "hub" {
   vpc_id = data.aws_vpc.hub.id
 
-  subnet_ids = [
+   subnet_ids = [
     data.aws_subnets.hub_private.ids[0],
     data.aws_subnets.hub_private.ids[1]
   ]
