@@ -125,10 +125,10 @@ jobs:
         with:
           terraform_version: 1.14.7
 
-      - name: Terraform Init
+      - name: Terraform Init  -upgrade
         run: terraform init
 
-      - name: Terraform Format 
+      - name: Terraform Format  -recursive
         run: terraform fmt 
 
       - name: Terraform Validate
