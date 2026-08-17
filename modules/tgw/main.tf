@@ -82,13 +82,3 @@ resource "aws_ram_principal_association" "spoke" {
   resource_share_arn = aws_ram_resource_share.tgw.arn
 }
 
-data "aws_subnets" "hub_private" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.hub.id]
-  }
-}
-
-data "aws_vpc" "hub" {
-  id = var.hub_vpc_id
-}
