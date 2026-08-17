@@ -12,7 +12,7 @@ data "terraform_remote_state" "spoke" {
   backend = "s3"
 
   config = {
-    bucket = "dhoni-demo-terraform-bucket-123456"
+    bucket = "harish-gaddam-bucket123"
     key    = "networking/spoke/terraform.tfstate"
     region = var.region
   }
