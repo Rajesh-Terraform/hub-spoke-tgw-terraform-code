@@ -16,7 +16,19 @@ data "terraform_remote_state" "spoke" {
     key    = "networking/spoke/terraform.tfstate"
     region = var.region
   }
+
+
+
+    providers = {
+    aws.hub   = aws.hub
+    aws.spoke = aws.spoke
+  }
+
 }
+
+
+
+
 
 module "tgw" {
   source = "../../modules/tgw"
