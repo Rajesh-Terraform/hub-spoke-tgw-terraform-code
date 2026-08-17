@@ -21,11 +21,6 @@ data "terraform_remote_state" "spoke" {
 module "tgw" {
   source = "../../modules/tgw"
 
-  providers = {
-    aws.hub   = aws.hub
-    aws.spoke = aws.spoke
-  }
-
   name = "hub-tgw"
 
   spoke_account_id = var.spoke_account_id
