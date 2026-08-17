@@ -46,3 +46,9 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+
+variable "hub_vpc_id" {
+  description = "VPC ID of the hub VPC"
+  type        = string
+}
