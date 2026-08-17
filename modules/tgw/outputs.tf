@@ -18,16 +18,6 @@ output "spoke_attachment_id" {
   value = aws_ec2_transit_gateway_vpc_attachment.spoke.id
 }
 
-output "hub_tgw_route_table_id" {
-  value = aws_ec2_transit_gateway_route_table.hub.id
-}
 
-output "spoke_tgw_route_table_id" {
-  value = aws_ec2_transit_gateway_route_table.spoke.id
-}
-
-output "ram_share_arn" {
-  value = aws_ram_resource_share.tgw.arn
-}
 
 
