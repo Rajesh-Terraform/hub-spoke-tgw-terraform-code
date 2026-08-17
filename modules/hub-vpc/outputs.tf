@@ -14,10 +14,14 @@ output "private_subnet_ids" {
   value = aws_subnet.private[*].id
 }
 
+output "public_route_table_id" {
+  value = aws_route_table.public.id
+}
+
 output "private_route_table_ids" {
   value = aws_route_table.private[*].id
 }
 
-output "public_route_table_id" {
-  value = var.create_public_subnets ? aws_route_table.public[0].id : null
+output "nat_gateway_ids" {
+  value = aws_nat_gateway.this[*].id
 }

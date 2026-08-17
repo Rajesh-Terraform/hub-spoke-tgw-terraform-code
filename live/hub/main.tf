@@ -1,8 +1,7 @@
 module "hub_vpc" {
-  source = "../../modules/vpc"
+  source = "../../modules/hub-vpc"
 
-  vpc_name = "hub-vpc"
-
+  name     = "hub-vpc"
   vpc_cidr = "10.0.0.0/16"
 
   availability_zones = [
@@ -20,4 +19,7 @@ module "hub_vpc" {
     "10.0.11.0/24"
   ]
 
+  tags = {
+    Phase = "phase-1"
+  }
 }
