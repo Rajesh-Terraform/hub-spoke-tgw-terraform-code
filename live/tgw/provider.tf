@@ -30,7 +30,7 @@ provider "aws" {
   region = var.region
 
   assume_role {
-    role_arn = "arn:aws:iam::434097521299:role/GitHubActionsTerraformRole"
+    role_arn = "arn:aws:iam::647132523867:role/github-actions-terraform-role-v1"
   }
 
   default_tags {
