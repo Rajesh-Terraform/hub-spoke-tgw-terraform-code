@@ -55,13 +55,8 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-
-
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
   # ============================================================
   # SPOKE
   # ============================================================
@@ -101,13 +96,8 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
-
-
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
   # ============================================================
   # TGW
   # ============================================================
@@ -154,8 +144,5 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
