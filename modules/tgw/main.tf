@@ -95,3 +95,10 @@ resource "aws_ram_principal_association" "spoke" {
 # HUB TGW ATTACHMENT
 # =========================================================
 
+resource "aws_ec2_transit_gateway" "this" {
+  # configuration
+}
+
+resource "aws_ec2_transit_gateway_vpc_attachment" "hub" {
+  # configuration
+}
