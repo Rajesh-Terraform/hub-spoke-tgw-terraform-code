@@ -1,38 +1,23 @@
-data "aws_vpc" "hub" {
-  id = var.hub_vpc_id
-}
+module "hub_vpc" {
+  source = "../../modules/vpc"
 
-data "aws_subnets" "hub_private" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.hub.id]
-  }
+  vpc_name = "hub-vpc"
 
-  filter {
-    name   = "tag:Tier"
-    values = ["private"]
-  }
-}
+  vpc_cidr = "10.0.0.0/16"
 
-module "transit_gateway" {
-  source = "./modules/transit-gateway"
-
-  name             = var.tgw_name
-  amazon_side_asn  = var.amazon_side_asn
-  spoke_account_id = var.spoke_account_id
-}
-
-resource "aws_ec2_transit_gateway_vpc_attachment" "hub" {
-  vpc_id = data.aws_vpc.hub.id
-
-  subnet_ids = [
-    data.aws_subnets.hub_private.ids[0],
-    data.aws_subnets.hub_private.ids[1]
+  availability_zones = [
+    "ap-south-1a",
+    "ap-south-1b"
   ]
 
-  transit_gateway_id = module.transit_gateway.transit_gateway_id
+  public_subnet_cidrs = [
+    "10.0.0.0/24",
+    "10.0.1.0/24"
+  ]
 
-  tags = {
-    Name = "${var.tgw_name}-hub-attachment"
-  }
-}
+  private_subnet_cidrs = [
+    "10.0.10.0/24",
+    "10.0.11.0/24"
+  ]
+
+ 
