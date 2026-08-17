@@ -26,7 +26,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: terraform/Hub VPC
+        working-directory: terraform/Hub-VPC
 
     steps:
     
