@@ -45,6 +45,17 @@ jobs:
           role-to-assume: arn:aws:iam::647132523867:role/github-actions-terraform-role-v1
           aws-region: ap-south-1
 
+
+      - name: Check repository structure
+        run: |
+         pwd
+          ls -la
+         find . -maxdepth 3 -type d    
+
+
+
+
+
       - name: Terraform Init
         run: terraform init
 
